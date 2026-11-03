@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101827">
+<title>Sub-60 10K | Training Plan</title>
+<style>
+:root{--bg:#0b1220;--panel:#121d2e;--panel2:#172438;--text:#eef4ff;--muted:#9aabc3;--line:#2a3a52;--green:#78e0ad;--lime:#c5f36b;--orange:#ffbd73;--red:#ff8b8b;--blue:#8bc5ff;--radius:20px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(900px 500px at 85% -10%,#203a50 0%,transparent 65%),var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+a{color:var(--green)}.wrap{max-width:1120px;margin:auto;padding:24px}.hero{padding:34px 0 26px}.eyebrow{color:var(--green);font-size:.78rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.hero h1{font-size:clamp(2.2rem,6vw,4.6rem);line-height:1.02;letter-spacing:-.05em;margin:12px 0}.hero p{max-width:700px;color:var(--muted);font-size:1.08rem}.hero strong{color:var(--text)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}.stat,.card,.week,.workout,.note{background:linear-gradient(145deg,var(--panel),#101a2a);border:1px solid var(--line);border-radius:var(--radius);padding:18px}.stat span{display:block;color:var(--muted);font-size:.83rem}.stat strong{display:block;font-size:1.6rem;letter-spacing:-.03em;margin-top:5px}.stat .goal{color:var(--lime)}.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 24px}.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 15px;border-radius:12px;cursor:pointer;font-weight:700}.btn:hover{border-color:var(--green)}.btn.primary{background:var(--green);color:#092015;border-color:var(--green)}.progress{height:8px;background:#26364c;border-radius:99px;overflow:hidden;margin:10px 0}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--lime));transition:width .25s}.section{margin:34px 0}.section h2{font-size:1.65rem;letter-spacing:-.03em;margin:0 0 8px}.sub{color:var(--muted);margin:0 0 18px}.week{margin:14px 0;padding:0;overflow:hidden}.weekhead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px;background:#18263a;cursor:pointer}.weekhead h3{margin:0;font-size:1.1rem}.pill{font-size:.75rem;font-weight:800;padding:5px 10px;border-radius:99px;background:#213a34;color:var(--green);white-space:nowrap}.weekbody{padding:12px 18px 18px}.day{display:grid;grid-template-columns:115px 1fr auto;gap:14px;align-items:start;padding:15px 4px;border-bottom:1px solid var(--line)}.day:last-child{border-bottom:0}.date{font-size:.88rem;color:var(--muted);font-weight:700}.daytitle{font-weight:800}.detail{color:var(--muted);font-size:.92rem}.tag{font-size:.74rem;padding:4px 9px;border-radius:9px;background:#26364b;color:#c8d8ee;white-space:nowrap}.day input{accent-color:var(--green);width:18px;height:18px;margin-top:5px}.day.done .daytitle{text-decoration:line-through;color:#91a49e}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}.workout h3{margin:0 0 8px}.workout ul{padding-left:20px;margin:8px 0}.workout li{margin:7px 0;color:#d7e2f1}.workout p{color:var(--muted);margin:8px 0}.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:15px}table{width:100%;border-collapse:collapse;min-width:520px}th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line)}th{background:#18263a;color:var(--muted);font-size:.83rem}tr:last-child td{border-bottom:0}.pace{color:var(--green);font-weight:800}.racebox{border:1px solid #47634e;background:linear-gradient(140deg,#142a25,#122033);border-radius:var(--radius);padding:20px}.racebox h3{margin-top:0}.split{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.split div{padding:12px;border:1px solid #355246;border-radius:13px}.split small{display:block;color:var(--muted)}.split strong{display:block;color:var(--lime)}.checklist{display:grid;gap:10px}.checkline{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}.checkline input{accent-color:var(--green);margin-top:5px}.note{border-color:#59462e;background:#211c17}.note strong{color:var(--orange)}.footer{color:var(--muted);font-size:.85rem;padding:28px 0 45px}.small{font-size:.84rem;color:var(--muted)}
+@media(max-width:760px){.wrap{padding:16px}.stats{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.day{grid-template-columns:82px 1fr auto;gap:8px}.split{grid-template-columns:repeat(2,1fr)}.weekhead{padding:15px}.weekbody{padding:8px 12px 14px}.daytitle{font-size:.96rem}.detail{font-size:.86rem}.tag{white-space:normal;text-align:center}}
+@media print{body{background:white;color:#111}.wrap{max-width:none}.stat,.card,.week,.workout,.note,.racebox{background:white;color:#111;border-color:#bbb}.detail,.sub,.stat span,.date,.small,.workout p{color:#444}.toolbar{display:none}.weekbody{display:block!important}.weekhead{background:#eee;color:#111}.tag{background:#eee;color:#111}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">Personal training dashboard · 3–29 November 2026</div>
+  <h1>THE SUB-60<br><span style="color:var(--lime)">10K PROJECT</span></h1>
+  <p>Four weeks to prepare for your <strong>10 km race on Sunday, 29 November</strong>. The goal is to build speed while protecting the endurance you already have. Train with discipline, recover with purpose, and let the workouts—not the ego—set the pace.</p>
+  <div class="stats">
+    <div class="stat"><span>Race goal</span><strong class="goal">59:59 or less</strong></div>
+    <div class="stat"><span>Target pace</span><strong>6:00/km</strong></div>
+    <div class="stat"><span>Current long run</span><strong>14 km</strong></div>
+    <div class="stat"><span>Plan length</span><strong>27 days</strong></div>
+  </div>
+  <div class="toolbar">
+    <button class="btn primary" onclick="document.querySelector('#calendar').scrollIntoView({behavior:'smooth'})">Go to my calendar ↓</button>
+    <button class="btn" onclick="window.print()">Print / Save PDF</button>
+    <button class="btn" onclick="resetChecks()">Reset checkboxes</button>
+  </div>
+</header>
+
+<section class="section card">
+<h2>Your starting point</h2>
+<p class="sub">Based on the run details you shared.</p>
+<div class="tablewrap"><table><thead><tr><th>Run</th><th>Distance / time</th><th>Average pace</th></tr></thead><tbody>
+<tr><td>Comfortable run</td><td>7 km · 50 min</td><td>7:08/km</td></tr>
+<tr><td>Recent long run</td><td>14 km · 1:50</td><td>7:51/km</td></tr>
+<tr><td>Race goal</td><td>10 km · under 60 min</td><td class="pace">6:00/km or faster</td></tr>
+</tbody></table></div>
+<p class="small">Sub-60 is an ambitious target from your current reported pace, though your 14 km run gives you an endurance base. This plan improves your chances; it cannot guarantee a finish time. Use the readiness checks and adjust if needed.</p>
+</section>
+
+
+<style>
+/* Session review additions */
+.ai-settings{margin:18px 0;background:linear-gradient(145deg,#142638,#121d2e);border:1px solid #35516a;border-radius:20px;padding:20px}
+.ai-settings h2{margin:0 0 5px;font-size:1.35rem}.ai-settings p{color:var(--muted);margin:0 0 14px;font-size:.9rem}
+.ai-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.ai-field label{display:block;color:#c7d6e9;font-size:.8rem;font-weight:750;margin-bottom:6px}
+.ai-field input,.ai-field select{width:100%;background:#0b1422;color:var(--text);border:1px solid #344960;border-radius:10px;padding:11px;font:inherit;min-width:0}
+.ai-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;align-items:center}.ai-status{font-size:.82rem;color:var(--green)}
+.session-extra{grid-column:2 / 4;border-top:1px solid var(--line);padding:12px 0 4px;margin-top:0}
+.session-extra .extra-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.session-extra label{display:block;font-size:.8rem;color:#c7d6e9;font-weight:750;margin-bottom:5px}
+.session-extra textarea{width:100%;min-height:76px;resize:vertical;background:#0b1422;color:var(--text);border:1px solid #344960;border-radius:10px;padding:10px;font:inherit}
+.session-extra input[type=file]{display:block;width:100%;font-size:.82rem;color:var(--muted)}
+.session-extra .remark-output{margin-top:10px;background:#0e1d2a;border:1px solid #2e4a5a;border-radius:12px;padding:11px;white-space:pre-wrap;color:#d9f4e7;font-size:.9rem;min-height:40px}
+.session-extra .remark-output:empty{display:none}
+.session-extra .image-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.session-extra .image-preview img{width:76px;height:76px;object-fit:cover;border-radius:8px;border:1px solid #3a5066}
+.session-extra .extra-buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+.session-extra button{border:1px solid #35516a;background:#20344a;color:#eef4ff;border-radius:9px;padding:8px 11px;font-weight:700;cursor:pointer}
+.session-extra button.ai-analyze{background:var(--green);color:#092015;border-color:var(--green)}
+@media(max-width:760px){.ai-grid{grid-template-columns:1fr}.session-extra{grid-column:1 / 4}.session-extra .extra-grid{grid-template-columns:1fr}.ai-settings{padding:15px}}
+</style>
+<section class="ai-settings" id="aiSettings">
+  <h2>AI Session Review</h2>
+  <p>Add your model API key to generate a coaching remark after a run. Upload Strava screenshots or activity images for analysis. Your key is saved only in this browser's local storage; use your own trusted device.</p>
+  <div class="ai-grid">
+    <div class="ai-field"><label for="aiProvider">Provider</label><select id="aiProvider"><option value="openai">OpenAI / GPT</option><option value="gemini">Google Gemini</option></select></div>
+    <div class="ai-field"><label for="aiModel">Model name</label><input id="aiModel" value="gpt-4o-mini" placeholder="e.g. gpt-4o-mini or gemini-2.5-flash"></div>
+    <div class="ai-field"><label for="aiKey">API key</label><input id="aiKey" type="password" autocomplete="off" placeholder="Paste your API key"></div>
+  </div>
+  <div class="ai-actions"><button class="btn primary" id="saveAiKey">Save settings</button><button class="btn" id="clearAiKey">Clear saved key</button><span class="ai-status" id="aiStatus" aria-live="polite"></span></div>
+  <p style="margin-top:12px">Note: This is a browser-only integration. API calls go directly to the selected provider. Do not use a work/shared device or a key with broad permissions. Strava direct sync is not enabled in this standalone file; attach activity screenshots here instead.</p>
+</section>
+
+<section id="calendar" class="section">
+<h2>Training calendar</h2>
+<p class="sub">Tick off each session as you complete it. Travel days are kept free: Saturday, Nov 7 and Sunday, Nov 15.</p>
+<div id="progressText" class="small">0 of 26 sessions completed</div><div class="progress"><span id="progressBar"></span></div>
+<div id="weeks"></div>
+</section>
+
+<section class="section">
+<h2>How to do each key workout</h2><p class="sub">Follow the warm-up, main set, recovery, and cool-down. Do not skip the easy portions.</p>
+<div class="two">
+<div class="workout"><h3>⚡ Intervals · speed</h3><p>Start with 10–15 minutes easy jogging, then dynamic leg swings, ankle circles, and 2 short relaxed accelerations.</p><ul><li><b>Nov 3:</b> 6 × 400 m at 5:45–5:55/km; 200 m easy jog/walk between reps.</li><li><b>Nov 10:</b> 5 × 800 m at about 5:55–6:05/km; 2–3 min easy recovery.</li><li><b>Nov 17:</b> 4 × 1 km at 5:50–6:00/km; 2–3 min easy recovery.</li><li><b>Nov 24:</b> 3 × 1 km at 6:00/km, relaxed and controlled.</li></ul><p>Finish with 1–1.5 km easy. If form or pace falls apart, slow down or stop the set.</p></div>
+<div class="workout"><h3>🎯 Tempo · pace control</h3><ul><li><b>Nov 12:</b> 1.5 km easy + 3 km at 6:15–6:35/km + 1.5–2 km easy.</li><li><b>Nov 19:</b> 1.5 km easy + 4 km at 6:15–6:25/km + 1.5 km easy.</li></ul><p>Tempo should feel “comfortably hard”—you can say a short phrase, but not chat freely. If this pace feels too hard, use 6:30–6:45/km.</p></div>
+<div class="workout"><h3>🌿 Easy / recovery runs</h3><p>Run at approximately 7:15–8:00/km, or slower if needed. You should be able to speak in full sentences. The purpose is aerobic fitness and recovery—not proving speed.</p><p>Strides are short, smooth accelerations, not sprints: run 15–20 seconds briskly, then walk/jog 60–90 seconds.</p></div>
+<div class="workout"><h3>🛣️ Long runs</h3><ul><li><b>Nov 8:</b> 10 km easy.</li><li><b>Nov 22:</b> 10–11 km easy.</li></ul><p>You have already run 14 km, so there is no need to increase distance aggressively. Keep the long run comfortable and finish feeling you could continue.</p></div>
+</div>
+</section>
+
+<section class="section">
+<h2>Bodyweight strength plan</h2><p class="sub">Two short sessions most weeks. Keep 2–3 reps “in reserve”; avoid training to failure. You do not need pull-ups for this 10K.</p>
+<div class="two">
+<div class="workout"><h3>Strength A · 25–30 min</h3><ul><li>Bodyweight squat — 3 × 12–15</li><li>Incline push-up — 3 × 8–10</li><li>Reverse lunge — 3 × 8–10 each leg</li><li>Glute bridge — 3 × 15</li><li>Calf raise — 3 × 20</li><li>Plank — 3 × 30–45 sec</li></ul><p>Rest 45–75 sec between sets. Use a stable surface for incline push-ups.</p></div>
+<div class="workout"><h3>Strength B · 20–30 min</h3><ul><li>Push-ups — 5 × 5 (incline/knee variation if needed)</li><li>Squat — 3 × 15</li><li>Walking lunge — 2 × 10 each leg</li><li>Single-leg glute bridge — 2 × 10 each leg</li><li>Bird dog — 3 × 10 each side</li><li>Wall sit — 3 × 30–40 sec</li></ul><p>Reduce reps if technique deteriorates. Keep the final week light; no heavy leg strength after Nov 20.</p></div>
+</div>
+<div class="note" style="margin-top:14px"><strong>Push-up progression:</strong> Start with clean sets of 5. If you cannot maintain a straight body line, elevate your hands on a sturdy bench/table. Build gradually—do not chase a max test during race preparation.</div>
+</section>
+
+<section class="section">
+<h2>Race-day pacing plan</h2><p class="sub">A controlled start gives you a better chance of holding pace later.</p>
+<div class="racebox">
+<h3>10 km · Sunday, 29 November</h3>
+<div class="split">
+<div><small>KM 1–2</small><strong>6:05–6:10/km</strong><small>Settle in</small></div>
+<div><small>KM 3–7</small><strong>5:58–6:00/km</strong><small>Steady rhythm</small></div>
+<div><small>KM 8–9</small><strong>5:50–5:55/km</strong><small>If controlled</small></div>
+<div><small>KM 10</small><strong>Strong finish</strong><small>Use what remains</small></div>
+</div>
+<p style="margin-top:14px">A 6:00/km average equals 60:00 exactly. GPS can read long, so if you feel strong, aim for a little margin—but do not sprint early to “bank” time.</p>
+</div>
+</section>
+
+<section class="section">
+<h2>Daily habits & recovery</h2>
+<div class="two">
+<div class="workout"><h3>Before a run</h3><ul><li>Easy runs: water and a light snack if hungry.</li><li>Quality sessions: familiar carbohydrate snack 30–90 minutes before if useful.</li><li>Warm up 10–15 minutes before intervals/tempo.</li><li>Wear familiar running shoes and avoid new gear on race day.</li></ul></div>
+<div class="workout"><h3>After a run</h3><ul><li>Walk/jog cool-down and gentle mobility.</li><li>Eat a meal with carbohydrates and protein.</li><li>Hydrate normally; more in heat/sweat, without forcing excessive water.</li><li>Aim for 7–9 hours sleep.</li><li>Do not aggressively diet during this short race block.</li></ul></div>
+</div>
+<p class="small">Nutrition: include protein in meals and enough carbohydrates to fuel training. Individual needs vary; this is general fitness guidance, not medical advice.</p>
+</section>
+
+<section class="section">
+<h2>Race-week checklist</h2>
+<div class="card checklist">
+<label class="checkline"><input type="checkbox" class="racecheck"> <span>Confirm race venue, start time, bib collection, and travel.</span></label>
+<label class="checkline"><input type="checkbox" class="racecheck"> <span>Prepare familiar running shoes, socks, clothes, watch, and bib pins.</span></label>
+<label class="checkline"><input type="checkbox" class="racecheck"> <span>Eat familiar foods; avoid experimenting with supplements or meals.</span></label>
+<label class="checkline"><input type="checkbox" class="racecheck"> <span>Sleep well on Friday and Saturday; keep Saturday restful.</span></label>
+<label class="checkline"><input type="checkbox" class="racecheck"> <span>Race morning: light familiar breakfast 2–3 hours before, normal hydration.</span></label>
+<label class="checkline"><input type="checkbox" class="racecheck"> <span>Warm up: 10–15 min easy jog, mobility, and 2–3 short strides.</span></label>
+</div>
+</section>
+
+<section class="section note">
+<strong>Listen to your body.</strong>
+<p>Stop running and seek medical help for chest pain, faintness, unusual shortness of breath, or severe symptoms. For sharp or worsening pain, do not push through it. If fatigue accumulates, skip an optional run rather than making up missed training. Consistency includes recovery.</p>
+</section>
+
+<footer class="footer">Built for your 10K goal · Plan dates: Nov 3–29, 2026 · Keep easy days easy, quality days controlled, and race day confident.</footer>
+</div>
+<script>
+const plan = [
+{title:"WEEK 1 · Build speed",dates:"Nov 3–8 · Travel Saturday",pill:"3 runs",days:[
+["TUE · NOV 3","Speed intervals","1.5 km easy warm-up + 6 × 400 m at 5:45–5:55/km (200 m easy recovery) + 1–1.5 km cool-down. Approx. 5–6 km.","QUALITY"],
+["WED · NOV 4","Strength A","25–30 min bodyweight strength. Keep reps controlled.","STRENGTH"],
+["THU · NOV 5","Easy run","5 km at conversational effort, roughly 7:15–8:00/km.","EASY"],
+["FRI · NOV 6","Recovery / mobility","20–30 min walk and gentle mobility. No hard workout.","RECOVERY"],
+["SAT · NOV 7","Travel day","Rest. Optional easy walk when practical.","TRAVEL"],
+["SUN · NOV 8","Long run","10 km easy at about 7:15–8:00/km. Slow down as needed.","LONG"]]},
+{title:"WEEK 2 · Build endurance",dates:"Nov 9–15 · Travel Sunday",pill:"3 runs",days:[
+["MON · NOV 9","Strength B","20–30 min. Leave a few reps in reserve.","STRENGTH"],
+["TUE · NOV 10","800 m intervals","Warm up 1.5 km; 5 × 800 m at 5:55–6:05/km, 2–3 min easy recovery; cool down. Total 6–7 km.","QUALITY"],
+["WED · NOV 11","Recovery","Rest or 30 min easy walk + mobility.","RECOVERY"],
+["THU · NOV 12","Tempo run","1.5 km easy + 3 km at 6:15–6:35/km + 1.5–2 km easy. Total 6–7 km.","TEMPO"],
+["FRI · NOV 13","Light strength","20–25 min, moderate. Avoid sore legs.","STRENGTH"],
+["SAT · NOV 14","Easy run","5 km easy. Finish with relaxed—not all-out—running.","EASY"],
+["SUN · NOV 15","Travel day","Rest. Optional walk if convenient.","TRAVEL"]]},
+{title:"WEEK 3 · Peak training",dates:"Nov 16–22",pill:"4 runs",days:[
+["MON · NOV 16","Recovery + light strength","20–25 min easy strength/mobility. Keep it light.","STRENGTH"],
+["TUE · NOV 17","1 km intervals","Warm up 1.5 km; 4 × 1 km at 5:50–6:00/km with 2–3 min easy recovery; cool down. Total 7–8 km.","QUALITY"],
+["WED · NOV 18","Recovery","Rest or 30 min easy walk.","RECOVERY"],
+["THU · NOV 19","Tempo run","1.5 km easy + 4 km at 6:15–6:25/km + 1.5 km easy. Total about 7 km.","TEMPO"],
+["FRI · NOV 20","Light strength","15–20 min gentle core and upper body. No hard legs.","STRENGTH"],
+["SAT · NOV 21","Easy + strides","5 km easy + 4 × 20 sec relaxed strides; walk/jog 60–90 sec between.","EASY"],
+["SUN · NOV 22","Final long run","10–11 km easy. No fast finish; prioritize feeling fresh.","LONG"]]},
+{title:"WEEK 4 · Taper & race",dates:"Nov 23–29",pill:"Fresh legs",days:[
+["MON · NOV 23","Rest","Full rest or gentle mobility.","REST"],
+["TUE · NOV 24","Short race-pace tune-up","1.5 km easy + 3 × 1 km at 6:00/km (2–3 min easy recovery) + easy cool-down. Total 5–6 km.","QUALITY"],
+["WED · NOV 25","Light strength","15 min easy activation only: a few squats, glute bridges, calf raises, and core. No soreness.","STRENGTH"],
+["THU · NOV 26","Easy + strides","4–5 km easy + 4 × 15 sec relaxed strides. Stop while fresh.","EASY"],
+["FRI · NOV 27","Rest & prepare","Rest, normal hydration, familiar food, prepare race kit.","REST"],
+["SAT · NOV 28","Shakeout (optional)","15–20 min very easy jog only if it helps you feel loose. Otherwise rest.","OPTIONAL"],
+["SUN · NOV 29","🏁 RACE DAY · 10K","Warm up, start controlled, follow the pacing plan, and finish strong. Target: sub-60 if conditions and readiness allow.","RACE"]]}
+];
+const root=document.getElementById("weeks");
+let sessionCount=0;
+plan.forEach((week,wi)=>{
+ const section=document.createElement("article");section.className="week";
+ const head=document.createElement("div");head.className="weekhead";head.innerHTML=`<div><h3>${week.title}</h3><div class="small">${week.dates}</div></div><span class="pill">${week.pill}　⌄</span>`;
+ const body=document.createElement("div");body.className="weekbody";
+ week.days.forEach((d,di)=>{
+   sessionCount++;
+   const id=`task-${wi}-${di}`;
+   const row=document.createElement("div");row.className="day";
+   row.innerHTML=`<div class="date">${d[0]}</div><div><div class="daytitle">${d[1]}</div><div class="detail">${d[2]}</div></div><div style="display:flex;gap:8px;align-items:flex-start"><span class="tag">${d[3]}</span><input aria-label="Mark ${d[1]} complete" type="checkbox" id="${id}" class="sessioncheck"></div>`;
+   body.appendChild(row);
+ });
+ head.addEventListener("click",()=>{body.hidden=!body.hidden;head.querySelector(".pill").textContent=week.pill+(body.hidden?"　＋":"　⌄")});
+ section.append(head,body);root.appendChild(section);
+});
+document.getElementById("progressText").textContent=`0 of ${sessionCount} sessions completed`;
+function updateProgress(){const checks=[...document.querySelectorAll(".sessioncheck")];const done=checks.filter(c=>c.checked).length;document.getElementById("progressText").textContent=`${done} of ${checks.length} sessions completed`;document.getElementById("progressBar").style.width=(done/checks.length*100)+"%";checks.forEach(c=>c.closest(".day").classList.toggle("done",c.checked))}
+document.querySelectorAll(".sessioncheck").forEach(c=>c.addEventListener("change",updateProgress));
+function resetChecks(){document.querySelectorAll('input[type="checkbox"]').forEach(c=>c.checked=false);updateProgress()}
+</script>
+
+<script>
+(function(){
+ const $=id=>document.getElementById(id);
+ const KEY_STORE="sub60_ai_settings_v1";
+ function status(t){$("aiStatus").textContent=t}
+ try{
+   const saved=JSON.parse(localStorage.getItem(KEY_STORE)||"null");
+   if(saved){$("aiProvider").value=saved.provider||"openai";$("aiModel").value=saved.model||"gpt-4o-mini";$("aiKey").value=saved.key||"";status("Settings loaded from this browser.");}
+ }catch(e){status("Could not read saved settings.");}
+ $("aiProvider").addEventListener("change",()=>{
+   if($("aiProvider").value==="gemini" && $("aiModel").value==="gpt-4o-mini")$("aiModel").value="gemini-2.5-flash";
+   if($("aiProvider").value==="openai" && $("aiModel").value==="gemini-2.5-flash")$("aiModel").value="gpt-4o-mini";
+ });
+ $("saveAiKey").addEventListener("click",()=>{
+   const data={provider:$("aiProvider").value,model:$("aiModel").value.trim(),key:$("aiKey").value.trim()};
+   if(!data.key||!data.model){status("Enter both a model name and API key.");return;}
+   try{localStorage.setItem(KEY_STORE,JSON.stringify(data));status("Saved in this browser.");}
+   catch(e){status("Browser storage unavailable. Keep the key entered for this session.");}
+ });
+ $("clearAiKey").addEventListener("click",()=>{try{localStorage.removeItem(KEY_STORE)}catch(e){}$("aiKey").value="";status("Saved key cleared from this browser.");});
+ function getSettings(){return {provider:$("aiProvider").value,model:$("aiModel").value.trim(),key:$("aiKey").value.trim()};}
+ function toBase64(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(",")[1]);r.onerror=reject;r.readAsDataURL(file);});}
+ function readImage(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file);});}
+ async function askAI({provider,model,key,context,images}){
+   if(provider==="openai"){
+     const content=[{type:"text",text:context}];
+     for(const image of images)content.push({type:"image_url",image_url:{url:image}});
+     const res=await fetch("https://api.openai.com/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model, messages:[{role:"system",content:"You are a supportive, careful running coach. Review the provided activity screenshot(s) and workout plan. Do not invent unreadable metrics. Give a concise session remark with: what went well, one improvement, any recovery/safety notice, and the next action. Be honest if data is unclear. Avoid medical diagnosis."},{role:"user",content}],temperature:0.3})});
+     const data=await res.json();if(!res.ok)throw new Error(data.error?.message||"OpenAI request failed ("+res.status+")");
+     return data.choices?.[0]?.message?.content||"No text returned.";
+   } else {
+     const parts=[{text:context}];
+     for(const image of images){const match=image.match(/^data:(.*?);base64,(.*)$/);if(match)parts.push({inline_data:{mime_type:match[1],data:match[2]}});}
+     const endpoint="https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(model)+":generateContent?key="+encodeURIComponent(key);
+     const res=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts}],systemInstruction:{parts:[{text:"You are a supportive, careful running coach. Review activity screenshot(s) and the planned workout. Do not invent unreadable metrics. Give a concise session remark: what went well, one improvement, recovery/safety notice, and next action. Be honest if data is unclear. Avoid medical diagnosis."}],generationConfig:{temperature:0.3}})});
+     const data=await res.json();if(!res.ok)throw new Error(data.error?.message||"Gemini request failed ("+res.status+")");
+     return (data.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("\n")||"No text returned.";
+   }
+ }
+ function addSessionFeatures(){
+   document.querySelectorAll(".day").forEach((row,index)=>{
+     if(row.dataset.aiAdded)return;row.dataset.aiAdded="1";
+     const title=row.querySelector(".daytitle")?.textContent||"Training session";
+     const detail=row.querySelector(".detail")?.textContent||"";
+     const extra=document.createElement("div");extra.className="session-extra";
+     const safeId="review-"+index;
+     extra.innerHTML=`<div class="extra-grid">
+       <div><label for="${safeId}-files">Activity screenshot(s) / photos</label><input id="${safeId}-files" type="file" accept="image/*" multiple><div class="image-preview" id="${safeId}-preview"></div></div>
+       <div><label for="${safeId}-note">Your session notes (optional)</label><textarea id="${safeId}-note" placeholder="How did it feel? Any pain, weather, effort, or watch metrics to mention?"></textarea></div>
+     </div>
+     <div class="extra-buttons"><button class="ai-analyze" type="button">Analyze activity → Add AI remark</button><button type="button" class="clear-remark">Clear remark</button></div>
+     <div class="remark-output" aria-live="polite" id="${safeId}-remark"></div>`;
+     row.appendChild(extra);
+     const fileInput=extra.querySelector("input[type=file]"),preview=extra.querySelector(".image-preview"),output=extra.querySelector(".remark-output"),analyze=extra.querySelector(".ai-analyze"),noteField=extra.querySelector("textarea");
+     const savedSessionKey="sub60_session_review_"+index;
+     try{const savedReview=JSON.parse(localStorage.getItem(savedSessionKey)||"null");if(savedReview){noteField.value=savedReview.note||"";output.textContent=savedReview.remark||"";}}catch(e){}
+     function saveReview(){try{localStorage.setItem(savedSessionKey,JSON.stringify({note:noteField.value,remark:output.textContent}));}catch(e){}}
+     noteField.addEventListener("input",saveReview);
+     fileInput.addEventListener("change",()=>{
+       preview.innerHTML="";
+       [...fileInput.files].slice(0,6).forEach(file=>{if(!file.type.startsWith("image/"))return;const img=document.createElement("img");img.alt="Activity upload preview";img.src=URL.createObjectURL(file);preview.appendChild(img);});
+     });
+     extra.querySelector(".clear-remark").addEventListener("click",()=>{output.textContent="";saveReview();});
+     analyze.addEventListener("click",async()=>{
+       const settings=getSettings();const files=[...fileInput.files].filter(f=>f.type.startsWith("image/")).slice(0,6);
+       if(!settings.key||!settings.model){output.textContent="Add and save your provider API key and model above first.";return;}
+       if(!files.length){output.textContent="Upload at least one Strava activity screenshot or image to analyze.";return;}
+       analyze.disabled=true;analyze.textContent="Analyzing…";output.textContent="Reviewing the uploaded activity image(s)…";
+       try{
+         const images=await Promise.all(files.map(readImage));
+         const userNote=extra.querySelector("textarea").value.trim();
+         const context=`Planned session: ${title}. Plan details: ${detail}. User notes: ${userNote||"None supplied"}. Analyze only visible activity data in the attached image(s), compare it with the planned session, and provide an actionable coaching remark.`;
+         const remark=await askAI({...settings,context,images});
+         output.textContent=remark;saveReview();
+       }catch(err){output.textContent="Could not analyze: "+(err.message||String(err))+". Check the API key, model name, provider access, network, and image format.";saveReview();}
+       finally{analyze.disabled=false;analyze.textContent="Analyze activity → Add AI remark";}
+     });
+   });
+ }
+ // The original page builds its workout rows before this script runs.
+ addSessionFeatures();
+})();
+</script>
+
+</body>
+</html>
