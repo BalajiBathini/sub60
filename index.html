@@ -55,15 +55,15 @@
 <script>
 (() => {
   const $ = id => document.getElementById(id);
-  // const CONFIG_KEY = "runlog.supabase.config.v1";
-  // Public frontend configuration.
-// Safe to include in GitHub Pages when RLS is correctly configured.
-const SUPABASE_URL = "https://rfuvirfgyxwvedhejxpo.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_hUkaGZYm_jynu8QHZ4u9tw_qVy4AsJm";
+  const CONFIG_KEY = "runlog.supabase.config.v1";
+//   // Public frontend configuration.
+// // Safe to include in GitHub Pages when RLS is correctly configured.
+// const SUPABASE_URL = "https://rfuvirfgyxwvedhejxpo.supabase.co";
+// const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_hUkaGZYm_jynu8QHZ4u9tw_qVy4AsJm";
 
-let supabase = null;
-let user = null;
-let sessions = [];
+// let supabase = null;
+// let user = null;
+// let sessions = [];
 
 let supabase = null, user = null, sessions = [];
 const setStatus = (id, msg, kind="") => { $(id).textContent = msg; $(id).className = "status " + kind; };
@@ -173,14 +173,14 @@ $("signinBtn").addEventListener("click",()=>authAction(false));$("signupBtn").ad
 $("logoutBtn").addEventListener("click",async()=>{if(supabase)await supabase.auth.signOut();});
 $("saveRun").addEventListener("click",saveRun);$("analyzeBtn").addEventListener("click",analyze);$("refreshBtn").addEventListener("click",loadSessions);
 $("clearForm").addEventListener("click",()=>{["distance","duration","effort","remarks","screenshot"].forEach(id=>$(id).value="");});
-// const saved=localStorage.getItem(CONFIG_KEY);
-// Automatically connect using the app's public configuration.
-connect(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY).catch((error) => {
- setVisible("configPanel", true);
+ const saved=localStorage.getItem(CONFIG_KEY);
+// // Automatically connect using the app's public configuration.
+// connect(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY).catch((error) => {
+//  setVisible("configPanel", true);
 
-// setVisible("configPanel", false);
-setStatus("configStatus", error.message || "Connection failed.", "err");
-});
+// // setVisible("configPanel", false);
+// setStatus("configStatus", error.message || "Connection failed.", "err");
+// });
 
 
   if(saved){try{const c=JSON.parse(saved);$("supabaseUrl").value=c.url;$("supabaseKey").value=c.key;connect(c.url,c.key).catch(e=>setStatus("configStatus",e.message,"err"));}catch{}}
