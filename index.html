@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Run Log — Personal 10K Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#101411;--panel:#1a201b;--panel2:#222a23;--line:#303a31;--text:#f0f4ed;--muted:#9ba79b;--lime:#c7f36b;--red:#ff887c;--blue:#8ac8ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Manrope,system-ui,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:11px 15px;font-weight:800;background:var(--lime);color:#17200f}button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}button.danger{background:#492622;color:#ffd8d3}button:disabled{opacity:.5;cursor:wait}
+.wrap{max-width:1120px;margin:auto;padding:24px 18px 60px}.top{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:22px}.brand{font-weight:800;letter-spacing:-.04em;font-size:23px}.brand span{color:var(--lime)}.tag{color:var(--muted);font:12px 'DM Mono',monospace;letter-spacing:.06em}.hero{padding:26px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(130deg,#222c21,#171c18);display:grid;grid-template-columns:1.3fr .7fr;gap:20px;margin-bottom:18px}.eyebrow{font:11px 'DM Mono',monospace;color:var(--lime);letter-spacing:.13em;text-transform:uppercase}.hero h1{font-size:clamp(28px,5vw,45px);line-height:1.05;letter-spacing:-.05em;margin:10px 0}.hero p{color:var(--muted);line-height:1.6;margin:0}.big{font:500 52px 'DM Mono',monospace;letter-spacing:-.06em;color:var(--lime)}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-self:center}.metric{background:#111712aa;border:1px solid var(--line);border-radius:13px;padding:14px}.metric small{display:block;color:var(--muted);font:10px 'DM Mono',monospace;text-transform:uppercase;letter-spacing:.1em}.metric b{display:block;margin-top:8px;font:20px 'DM Mono',monospace}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:20px;min-width:0}.card h2{margin:0 0 15px;font-size:17px;letter-spacing:-.03em}.field{display:grid;gap:6px;margin:10px 0}.field label{font-size:12px;color:var(--muted)}input,textarea,select{width:100%;background:#101511;border:1px solid var(--line);border-radius:9px;color:var(--text);padding:11px 12px;outline:none}textarea{min-height:85px;resize:vertical}input:focus,textarea:focus,select:focus{border-color:var(--lime)}.row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.status{font-size:12px;color:var(--muted);min-height:18px;margin:8px 0}.status.ok{color:var(--lime)}.status.err{color:var(--red)}.session-list{display:grid;gap:10px}.session{padding:12px;border:1px solid var(--line);border-radius:12px;background:#121713}.session-head{display:flex;justify-content:space-between;gap:12px}.session strong{font-size:14px}.session small{font:11px 'DM Mono',monospace;color:var(--muted)}.session p{font-size:13px;color:var(--muted);line-height:1.5;margin:8px 0}.session img{max-width:100%;max-height:190px;border-radius:8px;margin-top:8px}.empty{padding:20px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px;font-size:13px}.full{grid-column:1/-1}.hidden{display:none!important}.auth{max-width:450px;margin:40px auto}.fine{font-size:11px;color:var(--muted);line-height:1.6}.plan{display:grid;gap:8px}.planrow{display:grid;grid-template-columns:90px 1fr;gap:12px;padding:10px;border-bottom:1px solid var(--line);font-size:13px}.planrow time{font:11px 'DM Mono',monospace;color:var(--lime)}.planrow span{color:var(--muted)}.aiout{white-space:pre-wrap;font-size:13px;line-height:1.65;background:#111712;padding:14px;border:1px solid var(--line);border-radius:10px;margin-top:12px}
+@media(max-width:760px){.hero,.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(3,1fr)}.big{font-size:42px}.wrap{padding:15px 12px 45px}.card{padding:15px}.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div><div class="brand">RUN<span>/</span>LOG</div><div class="tag">PERSONAL TRAINING CONSOLE</div></div><div class="actions" style="margin:0"><span id="userLabel" class="tag">Not connected</span><button id="logoutBtn" class="secondary hidden">Sign out</button></div></header>
+
+<section id="configPanel" class="card">
+<h2>Connect your Supabase project</h2><p class="fine">Paste your project URL and publishable (or legacy anon) key. These are frontend configuration values—not your service-role key. After saving, configuration stays in this browser. The app requires your own Supabase project and database setup.</p>
+<div class="row"><div class="field"><label>Supabase project URL</label><input id="supabaseUrl" placeholder="https://your-project.supabase.co"></div><div class="field"><label>Publishable / anon key</label><input id="supabaseKey" placeholder="sb_publishable_… or eyJ…"></div></div>
+<div class="actions"><button id="connectBtn">Connect</button><button id="forgetConfig" class="secondary">Clear config</button></div><div id="configStatus" class="status"></div>
+</section>
+
+<section id="authPanel" class="card auth hidden">
+<h2>Sign in to your running log</h2><p class="fine">Use the personal email account you registered in Supabase Auth.</p>
+<div class="field"><label>Email</label><input id="email" type="email" autocomplete="email" placeholder="you@example.com"></div>
+<div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password" placeholder="At least 8 characters"></div>
+<div class="actions"><button id="signinBtn">Sign in</button><button id="signupBtn" class="secondary">Create account</button></div><div id="authStatus" class="status"></div>
+</section>
+
+<main id="appPanel" class="hidden">
+<section class="hero"><div><div class="eyebrow">November 10K build · Personal plan</div><h1>Every run<br>moves you forward.</h1><p>Log the session, leave a remark, attach your activity screenshot, and review your progress. Changes sync to Supabase instead of disappearing when the page refreshes.</p><div style="margin-top:20px"><div class="tag">GOAL PACE</div><div class="big">6:00<span style="font-size:17px">/km</span></div></div></div>
+<div class="metrics"><div class="metric"><small>Distance</small><b id="totalKm">0.0 km</b></div><div class="metric"><small>Runs logged</small><b id="runCount">0</b></div><div class="metric"><small>Avg pace</small><b id="avgPace">—</b></div></div></section>
+<div class="grid">
+<section class="card"><h2>Log a run / planned session</h2>
+<div class="row"><div class="field"><label>Date</label><input id="runDate" type="date"></div><div class="field"><label>Session type</label><select id="runType"><option>Easy run</option><option>Intervals</option><option>Tempo</option><option>Long run</option><option>Recovery</option><option>Race</option><option>Rest / cross-train</option></select></div></div>
+<div class="row"><div class="field"><label>Distance (km)</label><input id="distance" type="number" step="0.01" min="0" placeholder="e.g. 5"></div><div class="field"><label>Duration (minutes)</label><input id="duration" type="number" step="0.1" min="0" placeholder="e.g. 33"></div></div>
+<div class="row"><div class="field"><label>Effort (1–10)</label><input id="effort" type="number" min="1" max="10" placeholder="e.g. 6"></div><div class="field"><label>Activity source</label><select id="source"><option>Manual / Strava screenshot</option><option>Garmin</option><option>Apple Health</option><option>Other</option></select></div></div>
+<div class="field"><label>Session remarks / how it felt</label><textarea id="remarks" placeholder="Weather, energy, discomfort, intervals, wins, what to adjust…"></textarea></div>
+<div class="field"><label>Activity screenshot (PNG/JPG/WebP, max 8 MB)</label><input id="screenshot" type="file" accept="image/png,image/jpeg,image/webp"></div>
+<div class="actions"><button id="saveRun">Save session</button><button id="clearForm" class="secondary">Clear</button></div><div id="saveStatus" class="status"></div>
+</section>
+
+<section class="card"><h2>AI activity review</h2><p class="fine">Analyze a saved activity using its distance, duration, effort, and remarks. The Edge Function keeps the AI provider key server-side. It returns training-focused observations, not medical advice.</p>
+<div class="field"><label>Saved activity</label><select id="aiSession"><option value="">Choose a run…</option></select></div><div class="actions"><button id="analyzeBtn">Analyze activity</button></div><div id="aiStatus" class="status"></div><div id="aiOutput" class="aiout hidden"></div>
+<div style="margin-top:18px;border-top:1px solid var(--line);padding-top:14px"><h2 style="font-size:14px">Weekly outline</h2><div class="plan"><div class="planrow"><time>DAY 1</time><div><b>Intervals</b><br><span>Warm up, controlled repetitions, cool down</span></div></div><div class="planrow"><time>DAY 2</time><div><b>Easy</b><br><span>Conversational pace, relaxed effort</span></div></div><div class="planrow"><time>DAY 3</time><div><b>Long run</b><br><span>Build gradually; keep it comfortable</span></div></div></div></div>
+</section>
+<section class="card full"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><h2 style="margin-bottom:0">Saved sessions</h2><button id="refreshBtn" class="secondary">Refresh</button></div><div id="sessionList" class="session-list" style="margin-top:14px"><div class="empty">Your saved runs will appear here.</div></div></section>
+</div>
+<p class="fine" style="margin-top:18px">Personal dashboard · Manual activity capture · Supabase-backed sync · Screenshots stored in a private bucket. Do not upload sensitive screenshots containing unrelated personal data.</p>
+</main>
+</div>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const CONFIG_KEY = "runlog.supabase.config.v1";
+  let supabase = null, user = null, sessions = [];
+  const setStatus = (id, msg, kind="") => { $(id).textContent = msg; $(id).className = "status " + kind; };
+  const setVisible = (id, yes) => $(id).classList.toggle("hidden", !yes);
+  const today = new Date(); $("runDate").value = today.toISOString().slice(0,10);
+
+  async function connect(url, key) {
+    if (!url || !key || !/^https:\/\/.+/.test(url)) throw new Error("Enter a valid Supabase URL and publishable/anon key.");
+    supabase = window.supabase.createClient(url.replace(/\/+$/,""), key, {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    const {data,error} = await supabase.auth.getSession();
+    if (error) throw error;
+    $("userLabel").textContent = data.session?.user?.email || "Supabase connected";
+    setVisible("configPanel", false);
+    if (data.session) await showApp(data.session.user);
+    else { setVisible("authPanel",true); setVisible("appPanel",false); }
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setTimeout(async()=> {
+        if(session) await showApp(session.user);
+        else { user=null; setVisible("appPanel",false); setVisible("authPanel",true); setVisible("logoutBtn",false); }
+      },0);
+    });
+  }
+  async function showApp(currentUser) {
+    user=currentUser; $("userLabel").textContent=currentUser.email;
+    setVisible("authPanel",false); setVisible("appPanel",true); setVisible("logoutBtn",true);
+    await loadSessions();
+  }
+  async function authAction(signup) {
+    const email=$("email").value.trim(), password=$("password").value;
+    if(!email || password.length<8){setStatus("authStatus","Enter an email and password of at least 8 characters.","err");return;}
+    setStatus("authStatus",signup?"Creating account…":"Signing in…");
+    const result = signup ? await supabase.auth.signUp({email,password}) : await supabase.auth.signInWithPassword({email,password});
+    if(result.error){setStatus("authStatus",result.error.message,"err");return;}
+    if(signup && !result.data.session){setStatus("authStatus","Account created. Check your email to confirm, then sign in.","ok");return;}
+    setStatus("authStatus","Signed in.","ok");
+  }
+  async function loadSessions() {
+    setStatus("saveStatus","Loading saved sessions…");
+    const {data,error}=await supabase.from("run_sessions").select("*").order("session_date",{ascending:false}).limit(200);
+    if(error){setStatus("saveStatus","Could not load sessions: "+error.message,"err");return;}
+    sessions=data||[]; renderSessions(); updateMetrics(); setStatus("saveStatus","Synced with Supabase.","ok");
+  }
+  function pace(distance,duration){if(!distance||!duration)return "—";const mins=duration/distance;return `${Math.floor(mins)}:${String(Math.round((mins%1)*60)).padStart(2,"0")}/km`;}
+  function updateMetrics(){
+    const runs=sessions.filter(s=>Number(s.distance_km)>0&&Number(s.duration_minutes)>0);
+    const km=runs.reduce((n,s)=>n+Number(s.distance_km),0),mins=runs.reduce((n,s)=>n+Number(s.duration_minutes),0);
+    $("totalKm").textContent=km.toFixed(1)+" km";$("runCount").textContent=String(runs.length);$("avgPace").textContent=pace(km,mins);
+    $("aiSession").innerHTML='<option value="">Choose a run…</option>'+sessions.map(s=>`<option value="${s.id}">${esc(s.session_date)} · ${esc(s.session_type)} · ${Number(s.distance_km||0).toFixed(2)} km</option>`).join("");
+  }
+  function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+  async function renderSessions(){
+    if(!sessions.length){$("sessionList").innerHTML='<div class="empty">No sessions yet. Log your first run above.</div>';return;}
+    const nodes=await Promise.all(sessions.map(async s=>{
+      let img="";
+      if(s.screenshot_path){const {data}=await supabase.storage.from("activity-screenshots").createSignedUrl(s.screenshot_path,3600);if(data?.signedUrl)img=`<img src="${data.signedUrl}" alt="Activity screenshot">`;}
+      return `<article class="session"><div class="session-head"><div><strong>${esc(s.session_type)} · ${Number(s.distance_km||0).toFixed(2)} km</strong><br><small>${esc(s.session_date)} · ${esc(s.source||"Manual")}</small></div><div style="text-align:right"><strong>${esc(pace(Number(s.distance_km),Number(s.duration_minutes)))}</strong><br><small>${Number(s.duration_minutes||0).toFixed(1)} min</small></div></div>${s.remarks?`<p>${esc(s.remarks)}</p>`:""}${s.effort?`<small>Effort: ${esc(s.effort)}/10</small>`:""}${img}<div class="actions"><button class="secondary" data-delete="${esc(s.id)}">Delete</button></div></article>`;
+    }));
+    $("sessionList").innerHTML=nodes.join("");
+    $("sessionList").querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>deleteSession(b.dataset.delete)));
+  }
+  async function saveRun(){
+    if(!user){setStatus("saveStatus","Please sign in first.","err");return;}
+    const date=$("runDate").value, distance=Number($("distance").value||0), duration=Number($("duration").value||0), effort=$("effort").value?Number($("effort").value):null, file=$("screenshot").files[0]||null;
+    if(!date){setStatus("saveStatus","Choose a date.","err");return;}
+    if(file && (!["image/png","image/jpeg","image/webp"].includes(file.type)||file.size>8*1024*1024)){setStatus("saveStatus","Screenshot must be PNG/JPG/WebP and no larger than 8 MB.","err");return;}
+    if(distance<0||duration<0||(distance>0&&duration<=0)){setStatus("saveStatus","Distance/duration values are invalid. Enter duration for a run.","err");return;}
+    $("saveRun").disabled=true;setStatus("saveStatus","Saving…");
+    try{
+      let path=null;
+      if(file){const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");path=`${user.id}/${crypto.randomUUID()}-${safe}`;
+        const {error:upErr}=await supabase.storage.from("activity-screenshots").upload(path,file,{contentType:file.type,upsert:false});
+        if(upErr)throw upErr;
+      }
+      const record={user_id:user.id,session_date:date,session_type:$("runType").value,distance_km:distance,duration_minutes:duration,effort,source:$("source").value,remarks:$("remarks").value.trim(),screenshot_path:path};
+      const {error}=await supabase.from("run_sessions").insert(record);
+      if(error){if(path)await supabase.storage.from("activity-screenshots").remove([path]);throw error;}
+      $("distance").value="";$("duration").value="";$("effort").value="";$("remarks").value="";$("screenshot").value="";
+      await loadSessions();
+    }catch(e){setStatus("saveStatus",e.message||"Could not save.","err");}
+    finally{$("saveRun").disabled=false;}
+  }
+  async function deleteSession(id){
+    if(!confirm("Delete this saved session and its screenshot?"))return;
+    const s=sessions.find(x=>x.id===id);
+    if(s?.screenshot_path){const {error}=await supabase.storage.from("activity-screenshots").remove([s.screenshot_path]);if(error){setStatus("saveStatus","Could not delete screenshot: "+error.message,"err");return;}}
+    const {error}=await supabase.from("run_sessions").delete().eq("id",id);
+    if(error){setStatus("saveStatus",error.message,"err");return;}await loadSessions();
+  }
+  async function analyze(){
+    const id=$("aiSession").value;if(!id){setStatus("aiStatus","Choose a saved activity first.","err");return;}
+    const s=sessions.find(x=>x.id===id);if(!s)return;
+    $("analyzeBtn").disabled=true;setStatus("aiStatus","Requesting AI review…");setVisible("aiOutput",false);
+    try{
+      const {data,error}=await supabase.functions.invoke("analyze-activity",{body:{activity:{session_date:s.session_date,session_type:s.session_type,distance_km:s.distance_km,duration_minutes:s.duration_minutes,effort:s.effort,remarks:s.remarks}}});
+      if(error)throw error;if(!data?.analysis)throw new Error(data?.error||"No analysis returned.");
+      $("aiOutput").textContent=data.analysis;setVisible("aiOutput",true);setStatus("aiStatus","Review ready.","ok");
+    }catch(e){setStatus("aiStatus",e.message||"AI request failed. Confirm the Edge Function and secret are deployed.","err");}
+    finally{$("analyzeBtn").disabled=false;}
+  }
+  $("connectBtn").addEventListener("click",async()=>{
+    const url=$("supabaseUrl").value.trim(),key=$("supabaseKey").value.trim();
+    try{await connect(url,key);localStorage.setItem(CONFIG_KEY,JSON.stringify({url,key}));setStatus("configStatus","Connected.","ok");}
+    catch(e){setStatus("configStatus",e.message||"Connection failed.","err");}
+  });
+  $("forgetConfig").addEventListener("click",()=>{localStorage.removeItem(CONFIG_KEY);$("supabaseUrl").value="";$("supabaseKey").value="";setStatus("configStatus","Saved browser configuration cleared.");});
+  $("signinBtn").addEventListener("click",()=>authAction(false));$("signupBtn").addEventListener("click",()=>authAction(true));
+  $("logoutBtn").addEventListener("click",async()=>{if(supabase)await supabase.auth.signOut();});
+  $("saveRun").addEventListener("click",saveRun);$("analyzeBtn").addEventListener("click",analyze);$("refreshBtn").addEventListener("click",loadSessions);
+  $("clearForm").addEventListener("click",()=>{["distance","duration","effort","remarks","screenshot"].forEach(id=>$(id).value="");});
+  const saved=localStorage.getItem(CONFIG_KEY);
+  if(saved){try{const c=JSON.parse(saved);$("supabaseUrl").value=c.url;$("supabaseKey").value=c.key;connect(c.url,c.key).catch(e=>setStatus("configStatus",e.message,"err"));}catch{}}
+})();
+</script>
+</body></html>
