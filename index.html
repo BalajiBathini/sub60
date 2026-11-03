@@ -58,128 +58,128 @@
   // const CONFIG_KEY = "runlog.supabase.config.v1";
   // Public frontend configuration.
 // Safe to include in GitHub Pages when RLS is correctly configured.
-const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
+const SUPABASE_URL = "https://rfuvirfgyxwvedhejxpo.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_hUkaGZYm_jynu8QHZ4u9tw_qVy4AsJm";
 
 let supabase = null;
 let user = null;
 let sessions = [];
 
-  let supabase = null, user = null, sessions = [];
-  const setStatus = (id, msg, kind="") => { $(id).textContent = msg; $(id).className = "status " + kind; };
-  const setVisible = (id, yes) => $(id).classList.toggle("hidden", !yes);
-  const today = new Date(); $("runDate").value = today.toISOString().slice(0,10);
+let supabase = null, user = null, sessions = [];
+const setStatus = (id, msg, kind="") => { $(id).textContent = msg; $(id).className = "status " + kind; };
+const setVisible = (id, yes) => $(id).classList.toggle("hidden", !yes);
+const today = new Date(); $("runDate").value = today.toISOString().slice(0,10);
 
-  async function connect(url, key) {
-    if (!url || !key || !/^https:\/\/.+/.test(url)) throw new Error("Enter a valid Supabase URL and publishable/anon key.");
-    supabase = window.supabase.createClient(url.replace(/\/+$/,""), key, {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-    const {data,error} = await supabase.auth.getSession();
-    if (error) throw error;
-    $("userLabel").textContent = data.session?.user?.email || "Supabase connected";
-    setVisible("configPanel", false);
-    if (data.session) await showApp(data.session.user);
-    else { setVisible("authPanel",true); setVisible("appPanel",false); }
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setTimeout(async()=> {
-        if(session) await showApp(session.user);
-        else { user=null; setVisible("appPanel",false); setVisible("authPanel",true); setVisible("logoutBtn",false); }
-      },0);
-    });
-  }
-  async function showApp(currentUser) {
-    user=currentUser; $("userLabel").textContent=currentUser.email;
-    setVisible("authPanel",false); setVisible("appPanel",true); setVisible("logoutBtn",true);
-    await loadSessions();
-  }
-  async function authAction(signup) {
-    const email=$("email").value.trim(), password=$("password").value;
-    if(!email || password.length<8){setStatus("authStatus","Enter an email and password of at least 8 characters.","err");return;}
-    setStatus("authStatus",signup?"Creating account…":"Signing in…");
-    const result = signup ? await supabase.auth.signUp({email,password}) : await supabase.auth.signInWithPassword({email,password});
-    if(result.error){setStatus("authStatus",result.error.message,"err");return;}
-    if(signup && !result.data.session){setStatus("authStatus","Account created. Check your email to confirm, then sign in.","ok");return;}
-    setStatus("authStatus","Signed in.","ok");
-  }
-  async function loadSessions() {
-    setStatus("saveStatus","Loading saved sessions…");
-    const {data,error}=await supabase.from("run_sessions").select("*").order("session_date",{ascending:false}).limit(200);
-    if(error){setStatus("saveStatus","Could not load sessions: "+error.message,"err");return;}
-    sessions=data||[]; renderSessions(); updateMetrics(); setStatus("saveStatus","Synced with Supabase.","ok");
-  }
-  function pace(distance,duration){if(!distance||!duration)return "—";const mins=duration/distance;return `${Math.floor(mins)}:${String(Math.round((mins%1)*60)).padStart(2,"0")}/km`;}
-  function updateMetrics(){
-    const runs=sessions.filter(s=>Number(s.distance_km)>0&&Number(s.duration_minutes)>0);
-    const km=runs.reduce((n,s)=>n+Number(s.distance_km),0),mins=runs.reduce((n,s)=>n+Number(s.duration_minutes),0);
-    $("totalKm").textContent=km.toFixed(1)+" km";$("runCount").textContent=String(runs.length);$("avgPace").textContent=pace(km,mins);
-    $("aiSession").innerHTML='<option value="">Choose a run…</option>'+sessions.map(s=>`<option value="${s.id}">${esc(s.session_date)} · ${esc(s.session_type)} · ${Number(s.distance_km||0).toFixed(2)} km</option>`).join("");
-  }
-  function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-  async function renderSessions(){
-    if(!sessions.length){$("sessionList").innerHTML='<div class="empty">No sessions yet. Log your first run above.</div>';return;}
-    const nodes=await Promise.all(sessions.map(async s=>{
-      let img="";
-      if(s.screenshot_path){const {data}=await supabase.storage.from("activity-screenshots").createSignedUrl(s.screenshot_path,3600);if(data?.signedUrl)img=`<img src="${data.signedUrl}" alt="Activity screenshot">`;}
-      return `<article class="session"><div class="session-head"><div><strong>${esc(s.session_type)} · ${Number(s.distance_km||0).toFixed(2)} km</strong><br><small>${esc(s.session_date)} · ${esc(s.source||"Manual")}</small></div><div style="text-align:right"><strong>${esc(pace(Number(s.distance_km),Number(s.duration_minutes)))}</strong><br><small>${Number(s.duration_minutes||0).toFixed(1)} min</small></div></div>${s.remarks?`<p>${esc(s.remarks)}</p>`:""}${s.effort?`<small>Effort: ${esc(s.effort)}/10</small>`:""}${img}<div class="actions"><button class="secondary" data-delete="${esc(s.id)}">Delete</button></div></article>`;
-    }));
-    $("sessionList").innerHTML=nodes.join("");
-    $("sessionList").querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>deleteSession(b.dataset.delete)));
-  }
-  async function saveRun(){
-    if(!user){setStatus("saveStatus","Please sign in first.","err");return;}
-    const date=$("runDate").value, distance=Number($("distance").value||0), duration=Number($("duration").value||0), effort=$("effort").value?Number($("effort").value):null, file=$("screenshot").files[0]||null;
-    if(!date){setStatus("saveStatus","Choose a date.","err");return;}
-    if(file && (!["image/png","image/jpeg","image/webp"].includes(file.type)||file.size>8*1024*1024)){setStatus("saveStatus","Screenshot must be PNG/JPG/WebP and no larger than 8 MB.","err");return;}
-    if(distance<0||duration<0||(distance>0&&duration<=0)){setStatus("saveStatus","Distance/duration values are invalid. Enter duration for a run.","err");return;}
-    $("saveRun").disabled=true;setStatus("saveStatus","Saving…");
-    try{
-      let path=null;
-      if(file){const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");path=`${user.id}/${crypto.randomUUID()}-${safe}`;
-        const {error:upErr}=await supabase.storage.from("activity-screenshots").upload(path,file,{contentType:file.type,upsert:false});
-        if(upErr)throw upErr;
-      }
-      const record={user_id:user.id,session_date:date,session_type:$("runType").value,distance_km:distance,duration_minutes:duration,effort,source:$("source").value,remarks:$("remarks").value.trim(),screenshot_path:path};
-      const {error}=await supabase.from("run_sessions").insert(record);
-      if(error){if(path)await supabase.storage.from("activity-screenshots").remove([path]);throw error;}
-      $("distance").value="";$("duration").value="";$("effort").value="";$("remarks").value="";$("screenshot").value="";
-      await loadSessions();
-    }catch(e){setStatus("saveStatus",e.message||"Could not save.","err");}
-    finally{$("saveRun").disabled=false;}
-  }
-  async function deleteSession(id){
-    if(!confirm("Delete this saved session and its screenshot?"))return;
-    const s=sessions.find(x=>x.id===id);
-    if(s?.screenshot_path){const {error}=await supabase.storage.from("activity-screenshots").remove([s.screenshot_path]);if(error){setStatus("saveStatus","Could not delete screenshot: "+error.message,"err");return;}}
-    const {error}=await supabase.from("run_sessions").delete().eq("id",id);
-    if(error){setStatus("saveStatus",error.message,"err");return;}await loadSessions();
-  }
-  async function analyze(){
-    const id=$("aiSession").value;if(!id){setStatus("aiStatus","Choose a saved activity first.","err");return;}
-    const s=sessions.find(x=>x.id===id);if(!s)return;
-    $("analyzeBtn").disabled=true;setStatus("aiStatus","Requesting AI review…");setVisible("aiOutput",false);
-    try{
-      const {data,error}=await supabase.functions.invoke("analyze-activity",{body:{activity:{session_date:s.session_date,session_type:s.session_type,distance_km:s.distance_km,duration_minutes:s.duration_minutes,effort:s.effort,remarks:s.remarks}}});
-      if(error)throw error;if(!data?.analysis)throw new Error(data?.error||"No analysis returned.");
-      $("aiOutput").textContent=data.analysis;setVisible("aiOutput",true);setStatus("aiStatus","Review ready.","ok");
-    }catch(e){setStatus("aiStatus",e.message||"AI request failed. Confirm the Edge Function and secret are deployed.","err");}
-    finally{$("analyzeBtn").disabled=false;}
-  }
-  $("connectBtn").addEventListener("click",async()=>{
-    const url=$("supabaseUrl").value.trim(),key=$("supabaseKey").value.trim();
-    try{await connect(url,key);localStorage.setItem(CONFIG_KEY,JSON.stringify({url,key}));setStatus("configStatus","Connected.","ok");}
-    catch(e){setStatus("configStatus",e.message||"Connection failed.","err");}
+async function connect(url, key) {
+  if (!url || !key || !/^https:\/\/.+/.test(url)) throw new Error("Enter a valid Supabase URL and publishable/anon key.");
+  supabase = window.supabase.createClient(url.replace(/\/+$/,""), key, {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  const {data,error} = await supabase.auth.getSession();
+  if (error) throw error;
+  $("userLabel").textContent = data.session?.user?.email || "Supabase connected";
+  setVisible("configPanel", false);
+  if (data.session) await showApp(data.session.user);
+  else { setVisible("authPanel",true); setVisible("appPanel",false); }
+  supabase.auth.onAuthStateChange((_event, session) => {
+    setTimeout(async()=> {
+      if(session) await showApp(session.user);
+      else { user=null; setVisible("appPanel",false); setVisible("authPanel",true); setVisible("logoutBtn",false); }
+    },0);
   });
-  $("forgetConfig").addEventListener("click",()=>{localStorage.removeItem(CONFIG_KEY);$("supabaseUrl").value="";$("supabaseKey").value="";setStatus("configStatus","Saved browser configuration cleared.");});
-  $("signinBtn").addEventListener("click",()=>authAction(false));$("signupBtn").addEventListener("click",()=>authAction(true));
-  $("logoutBtn").addEventListener("click",async()=>{if(supabase)await supabase.auth.signOut();});
-  $("saveRun").addEventListener("click",saveRun);$("analyzeBtn").addEventListener("click",analyze);$("refreshBtn").addEventListener("click",loadSessions);
-  $("clearForm").addEventListener("click",()=>{["distance","duration","effort","remarks","screenshot"].forEach(id=>$(id).value="");});
-  // const saved=localStorage.getItem(CONFIG_KEY);
-  // Automatically connect using the app's public configuration.
+}
+async function showApp(currentUser) {
+  user=currentUser; $("userLabel").textContent=currentUser.email;
+  setVisible("authPanel",false); setVisible("appPanel",true); setVisible("logoutBtn",true);
+  await loadSessions();
+}
+async function authAction(signup) {
+  const email=$("email").value.trim(), password=$("password").value;
+  if(!email || password.length<8){setStatus("authStatus","Enter an email and password of at least 8 characters.","err");return;}
+  setStatus("authStatus",signup?"Creating account…":"Signing in…");
+  const result = signup ? await supabase.auth.signUp({email,password}) : await supabase.auth.signInWithPassword({email,password});
+  if(result.error){setStatus("authStatus",result.error.message,"err");return;}
+  if(signup && !result.data.session){setStatus("authStatus","Account created. Check your email to confirm, then sign in.","ok");return;}
+  setStatus("authStatus","Signed in.","ok");
+}
+async function loadSessions() {
+  setStatus("saveStatus","Loading saved sessions…");
+  const {data,error}=await supabase.from("run_sessions").select("*").order("session_date",{ascending:false}).limit(200);
+  if(error){setStatus("saveStatus","Could not load sessions: "+error.message,"err");return;}
+  sessions=data||[]; renderSessions(); updateMetrics(); setStatus("saveStatus","Synced with Supabase.","ok");
+}
+function pace(distance,duration){if(!distance||!duration)return "—";const mins=duration/distance;return `${Math.floor(mins)}:${String(Math.round((mins%1)*60)).padStart(2,"0")}/km`;}
+function updateMetrics(){
+  const runs=sessions.filter(s=>Number(s.distance_km)>0&&Number(s.duration_minutes)>0);
+  const km=runs.reduce((n,s)=>n+Number(s.distance_km),0),mins=runs.reduce((n,s)=>n+Number(s.duration_minutes),0);
+  $("totalKm").textContent=km.toFixed(1)+" km";$("runCount").textContent=String(runs.length);$("avgPace").textContent=pace(km,mins);
+  $("aiSession").innerHTML='<option value="">Choose a run…</option>'+sessions.map(s=>`<option value="${s.id}">${esc(s.session_date)} · ${esc(s.session_type)} · ${Number(s.distance_km||0).toFixed(2)} km</option>`).join("");
+}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+async function renderSessions(){
+  if(!sessions.length){$("sessionList").innerHTML='<div class="empty">No sessions yet. Log your first run above.</div>';return;}
+  const nodes=await Promise.all(sessions.map(async s=>{
+    let img="";
+    if(s.screenshot_path){const {data}=await supabase.storage.from("activity-screenshots").createSignedUrl(s.screenshot_path,3600);if(data?.signedUrl)img=`<img src="${data.signedUrl}" alt="Activity screenshot">`;}
+    return `<article class="session"><div class="session-head"><div><strong>${esc(s.session_type)} · ${Number(s.distance_km||0).toFixed(2)} km</strong><br><small>${esc(s.session_date)} · ${esc(s.source||"Manual")}</small></div><div style="text-align:right"><strong>${esc(pace(Number(s.distance_km),Number(s.duration_minutes)))}</strong><br><small>${Number(s.duration_minutes||0).toFixed(1)} min</small></div></div>${s.remarks?`<p>${esc(s.remarks)}</p>`:""}${s.effort?`<small>Effort: ${esc(s.effort)}/10</small>`:""}${img}<div class="actions"><button class="secondary" data-delete="${esc(s.id)}">Delete</button></div></article>`;
+  }));
+  $("sessionList").innerHTML=nodes.join("");
+  $("sessionList").querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>deleteSession(b.dataset.delete)));
+}
+async function saveRun(){
+  if(!user){setStatus("saveStatus","Please sign in first.","err");return;}
+  const date=$("runDate").value, distance=Number($("distance").value||0), duration=Number($("duration").value||0), effort=$("effort").value?Number($("effort").value):null, file=$("screenshot").files[0]||null;
+  if(!date){setStatus("saveStatus","Choose a date.","err");return;}
+  if(file && (!["image/png","image/jpeg","image/webp"].includes(file.type)||file.size>8*1024*1024)){setStatus("saveStatus","Screenshot must be PNG/JPG/WebP and no larger than 8 MB.","err");return;}
+  if(distance<0||duration<0||(distance>0&&duration<=0)){setStatus("saveStatus","Distance/duration values are invalid. Enter duration for a run.","err");return;}
+  $("saveRun").disabled=true;setStatus("saveStatus","Saving…");
+  try{
+    let path=null;
+    if(file){const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");path=`${user.id}/${crypto.randomUUID()}-${safe}`;
+      const {error:upErr}=await supabase.storage.from("activity-screenshots").upload(path,file,{contentType:file.type,upsert:false});
+      if(upErr)throw upErr;
+    }
+    const record={user_id:user.id,session_date:date,session_type:$("runType").value,distance_km:distance,duration_minutes:duration,effort,source:$("source").value,remarks:$("remarks").value.trim(),screenshot_path:path};
+    const {error}=await supabase.from("run_sessions").insert(record);
+    if(error){if(path)await supabase.storage.from("activity-screenshots").remove([path]);throw error;}
+    $("distance").value="";$("duration").value="";$("effort").value="";$("remarks").value="";$("screenshot").value="";
+    await loadSessions();
+  }catch(e){setStatus("saveStatus",e.message||"Could not save.","err");}
+  finally{$("saveRun").disabled=false;}
+}
+async function deleteSession(id){
+  if(!confirm("Delete this saved session and its screenshot?"))return;
+  const s=sessions.find(x=>x.id===id);
+  if(s?.screenshot_path){const {error}=await supabase.storage.from("activity-screenshots").remove([s.screenshot_path]);if(error){setStatus("saveStatus","Could not delete screenshot: "+error.message,"err");return;}}
+  const {error}=await supabase.from("run_sessions").delete().eq("id",id);
+  if(error){setStatus("saveStatus",error.message,"err");return;}await loadSessions();
+}
+async function analyze(){
+  const id=$("aiSession").value;if(!id){setStatus("aiStatus","Choose a saved activity first.","err");return;}
+  const s=sessions.find(x=>x.id===id);if(!s)return;
+  $("analyzeBtn").disabled=true;setStatus("aiStatus","Requesting AI review…");setVisible("aiOutput",false);
+  try{
+    const {data,error}=await supabase.functions.invoke("analyze-activity",{body:{activity:{session_date:s.session_date,session_type:s.session_type,distance_km:s.distance_km,duration_minutes:s.duration_minutes,effort:s.effort,remarks:s.remarks}}});
+    if(error)throw error;if(!data?.analysis)throw new Error(data?.error||"No analysis returned.");
+    $("aiOutput").textContent=data.analysis;setVisible("aiOutput",true);setStatus("aiStatus","Review ready.","ok");
+  }catch(e){setStatus("aiStatus",e.message||"AI request failed. Confirm the Edge Function and secret are deployed.","err");}
+  finally{$("analyzeBtn").disabled=false;}
+}
+$("connectBtn").addEventListener("click",async()=>{
+  const url=$("supabaseUrl").value.trim(),key=$("supabaseKey").value.trim();
+  try{await connect(url,key);localStorage.setItem(CONFIG_KEY,JSON.stringify({url,key}));setStatus("configStatus","Connected.","ok");}
+  catch(e){setStatus("configStatus",e.message||"Connection failed.","err");}
+});
+$("forgetConfig").addEventListener("click",()=>{localStorage.removeItem(CONFIG_KEY);$("supabaseUrl").value="";$("supabaseKey").value="";setStatus("configStatus","Saved browser configuration cleared.");});
+$("signinBtn").addEventListener("click",()=>authAction(false));$("signupBtn").addEventListener("click",()=>authAction(true));
+$("logoutBtn").addEventListener("click",async()=>{if(supabase)await supabase.auth.signOut();});
+$("saveRun").addEventListener("click",saveRun);$("analyzeBtn").addEventListener("click",analyze);$("refreshBtn").addEventListener("click",loadSessions);
+$("clearForm").addEventListener("click",()=>{["distance","duration","effort","remarks","screenshot"].forEach(id=>$(id).value="");});
+// const saved=localStorage.getItem(CONFIG_KEY);
+// Automatically connect using the app's public configuration.
 connect(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY).catch((error) => {
-  // setVisible("configPanel", true);
-  
+// setVisible("configPanel", true);
+
 setVisible("configPanel", false);
-  setStatus("configStatus", error.message || "Connection failed.", "err");
+setStatus("configStatus", error.message || "Connection failed.", "err");
 });
 
 
