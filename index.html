@@ -176,9 +176,9 @@ $("clearForm").addEventListener("click",()=>{["distance","duration","effort","re
 // const saved=localStorage.getItem(CONFIG_KEY);
 // Automatically connect using the app's public configuration.
 connect(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY).catch((error) => {
-// setVisible("configPanel", true);
+ setVisible("configPanel", true);
 
-setVisible("configPanel", false);
+// setVisible("configPanel", false);
 setStatus("configStatus", error.message || "Connection failed.", "err");
 });
 
