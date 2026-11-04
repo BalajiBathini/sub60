@@ -44,24 +44,23 @@ Deno.serve(async (req: Request) => {
       pace_min_per_km: distance > 0 ? Math.round((duration / distance) * 100) / 100 : null,
     };
 
-    const model = Deno.env.get("GEMINI_MODEL") || "gemini-2.5-flash";
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+    const configuredModel = Deno.env.get("GEMINI_MODEL") || "gemini-3.8-flash";
+    const model = configuredModel.replace(/^models\//, "");
+    const response = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
       method: "POST",
       headers: { "x-goog-api-key": apiKey, "Content-Type": "application/json" },
       body: JSON.stringify({
-        systemInstruction: {
-          parts: [{ text: "You are a careful recreational running coach. Give a concise review: (1) what the numbers suggest, (2) one positive observation, (3) one practical next-session adjustment, and (4) recovery reminder. Use the supplied effort and remarks. Do not diagnose injuries or provide medical advice. Do not claim that one workout proves fitness or predict a race result. If pain, dizziness, chest symptoms, or unusual shortness of breath are mentioned, recommend stopping and seeking appropriate medical care." }],
-        },
-        contents: [{ role: "user", parts: [{ text: `Review this activity:\n${JSON.stringify(activity)}` }] }],
-        generationConfig: { temperature: 0.3 },
+        model,
+        input: `You are a careful recreational running coach. Give a concise review: (1) what the numbers suggest, (2) one positive observation, (3) one practical next-session adjustment, and (4) recovery reminder. Use the supplied effort and remarks. Do not diagnose injuries or provide medical advice. Do not claim that one workout proves fitness or predict a race result. If pain, dizziness, chest symptoms, or unusual shortness of breath are mentioned, recommend stopping and seeking appropriate medical care.\n\nReview this activity:\n${JSON.stringify(activity)}`,
       })
     });
     const result = await response.json();
     if (!response.ok) {
       return Response.json({ error: result?.error?.message || "AI provider request failed." }, { status: 502, headers: corsHeaders });
     }
-    const analysis = result?.candidates?.[0]?.content?.parts
-      ?.map((part: { text?: string }) => part.text || "")
+    const analysis = result?.output_text || result?.outputs
+      ?.filter((output: { type?: string }) => output.type === "text")
+      .map((output: { text?: string }) => output.text || "")
       .join("\n")
       .trim();
     if (!analysis) return Response.json({ error: "No analysis returned by provider." }, { status: 502, headers: corsHeaders });

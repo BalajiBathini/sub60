@@ -35,8 +35,8 @@ npm install -g supabase
 supabase login
 supabase link --project-ref YOUR_PROJECT_REF
 supabase secrets set GEMINI_API_KEY=YOUR_GEMINI_API_KEY
-# Optional model override (the default is gemini-2.5-flash):
-supabase secrets set GEMINI_MODEL=gemini-2.5-flash
+# Set the model explicitly. The `models/` prefix is also accepted.
+supabase secrets set GEMINI_MODEL=gemini-3.8-flash
 supabase functions deploy analyze-activity
 ```
 The function validates the Supabase user session and keeps the Gemini key server-side. Do not commit secrets or add them to `index.html`. AI API usage may incur charges. You can still log sessions and upload screenshots if AI is not deployed; the Analyze action will show a configuration error.
