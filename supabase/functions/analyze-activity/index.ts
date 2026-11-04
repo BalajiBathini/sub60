@@ -46,17 +46,28 @@ Deno.serve(async (req: Request) => {
 
     const configuredModel = Deno.env.get("GEMINI_MODEL") || "gemini-3.8-flash";
     const model = configuredModel.replace(/^models\//, "");
-    const response = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
-      method: "POST",
-      headers: { "x-goog-api-key": apiKey, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model,
-        input: `You are a careful recreational running coach. Give a concise review: (1) what the numbers suggest, (2) one positive observation, (3) one practical next-session adjustment, and (4) recovery reminder. Use the supplied effort and remarks. Do not diagnose injuries or provide medical advice. Do not claim that one workout proves fitness or predict a race result. If pain, dizziness, chest symptoms, or unusual shortness of breath are mentioned, recommend stopping and seeking appropriate medical care.\n\nReview this activity:\n${JSON.stringify(activity)}`,
-      })
+    const requestBody = JSON.stringify({
+      model,
+      input: `You are a careful recreational running coach. Give a concise review: (1) what the numbers suggest, (2) one positive observation, (3) one practical next-session adjustment, and (4) recovery reminder. Use the supplied effort and remarks. Do not diagnose injuries or provide medical advice. Do not claim that one workout proves fitness or predict a race result. If pain, dizziness, chest symptoms, or unusual shortness of breath are mentioned, recommend stopping and seeking appropriate medical care.\n\nReview this activity:\n${JSON.stringify(activity)}`,
     });
+    let response: Response;
+    for (let attempt = 0; ; attempt++) {
+      response = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
+        method: "POST",
+        headers: { "x-goog-api-key": apiKey, "Content-Type": "application/json" },
+        body: requestBody,
+      });
+      if (![429, 503].includes(response.status) || attempt >= 2) break;
+      const retryAfter = Number(response.headers.get("Retry-After"));
+      await response.body?.cancel();
+      await new Promise(resolve => setTimeout(resolve, Number.isFinite(retryAfter) && retryAfter > 0
+        ? Math.min(retryAfter * 1000, 3000)
+        : 500 * 2 ** attempt));
+    }
     const result = await response.json();
     if (!response.ok) {
-      return Response.json({ error: result?.error?.message || "AI provider request failed." }, { status: 502, headers: corsHeaders });
+      const overloaded = response.status === 429 || response.status === 503;
+      return Response.json({ error: result?.error?.message || (overloaded ? "Gemini is temporarily overloaded. Please try again shortly." : "AI provider request failed.") }, { status: overloaded ? 503 : 502, headers: corsHeaders });
     }
     const analysis = result?.output_text || result?.outputs
       ?.filter((output: { type?: string }) => output.type === "text")
