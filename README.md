@@ -29,17 +29,17 @@ Create your account from the dashboard's “Create account” button. If email c
 
 ## 4. Deploy AI function (optional but included)
 
-AI review uses OpenAI via a Supabase Edge Function. Install Supabase CLI and sign in:
+AI review uses Gemini via a Supabase Edge Function. Install Supabase CLI and sign in:
 ```bash
 npm install -g supabase
 supabase login
 supabase link --project-ref YOUR_PROJECT_REF
-supabase secrets set OPENAI_API_KEY=YOUR_OPENAI_API_KEY
-# Optional model override:
-supabase secrets set OPENAI_MODEL=gpt-4o-mini
+supabase secrets set GEMINI_API_KEY=YOUR_GEMINI_API_KEY
+# Optional model override (the default is gemini-2.5-flash):
+supabase secrets set GEMINI_MODEL=gemini-2.5-flash
 supabase functions deploy analyze-activity
 ```
-The function validates the Supabase user session and keeps the OpenAI key server-side. Do not commit secrets or add them to `index.html`. AI API usage may incur charges. You can still log sessions and upload screenshots if AI is not deployed; the Analyze action will show a configuration error.
+The function validates the Supabase user session and keeps the Gemini key server-side. Do not commit secrets or add them to `index.html`. AI API usage may incur charges. You can still log sessions and upload screenshots if AI is not deployed; the Analyze action will show a configuration error.
 
 ## 5. Publish to GitHub Pages
 
@@ -67,7 +67,7 @@ For a project site, URL format is generally:
 
 - Browser configuration uses only the project URL and publishable/anon key. RLS policies constrain database and storage operations to the authenticated user.
 - The screenshot bucket is private. Images are displayed using short-lived signed URLs.
-- The Edge Function checks the Supabase Auth JWT and uses an environment secret for OpenAI.
+- The Edge Function checks the Supabase Auth JWT and uses the `GEMINI_API_KEY` environment secret.
 - This package is configured for a single personal account, but its RLS structure remains user-scoped.
 - The published URL and publishable/anon key are shared frontend configuration; local browser storage is only a fallback when those constants are not configured. Supabase Auth sessions are stored per browser. Run records and screenshots are persisted remotely.
 - No direct Strava API connection is present. Use manual entry or screenshot upload.
@@ -81,6 +81,6 @@ For a project site, URL format is generally:
 
 **Screenshot upload fails** — verify the bucket exists, is private, and storage policies are present; check file type and 8 MB limit.
 
-**AI review fails** — deploy the Edge Function, set `OPENAI_API_KEY`, and ensure your Supabase Auth user is signed in. AI use may be billable.
+**AI review fails** — set `GEMINI_API_KEY`, deploy the Edge Function, and ensure your Supabase Auth user is signed in. AI use may be billable.
 
 **Auth email not received** — check spam and Supabase Auth email confirmation settings.

@@ -1,6 +1,6 @@
 // Supabase Edge Function: analyze-activity
 // Deploy with: supabase functions deploy analyze-activity
-// Set OPENAI_API_KEY as a Supabase secret. Never place it in the HTML.
+// Set GEMINI_API_KEY as a Supabase secret. Never place it in the HTML.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const corsHeaders = {
@@ -24,8 +24,8 @@ Deno.serve(async (req: Request) => {
     });
     if (!verify.ok) return Response.json({ error: "Invalid session." }, { status: 401, headers: corsHeaders });
 
-    const apiKey = Deno.env.get("OPENAI_API_KEY");
-    if (!apiKey) return Response.json({ error: "AI provider key is not configured. Set OPENAI_API_KEY in Supabase secrets." }, { status: 503, headers: corsHeaders });
+    const apiKey = Deno.env.get("GEMINI_API_KEY");
+    if (!apiKey) return Response.json({ error: "Gemini API key is not configured. Set GEMINI_API_KEY in Supabase secrets." }, { status: 503, headers: corsHeaders });
 
     const body = await req.json();
     const a = body?.activity ?? {};
@@ -44,23 +44,26 @@ Deno.serve(async (req: Request) => {
       pace_min_per_km: distance > 0 ? Math.round((duration / distance) * 100) / 100 : null,
     };
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const model = Deno.env.get("GEMINI_MODEL") || "gemini-2.5-flash";
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
       method: "POST",
-      headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      headers: { "x-goog-api-key": apiKey, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: Deno.env.get("OPENAI_MODEL") || "gpt-4o-mini",
-        temperature: 0.3,
-        messages: [
-          { role: "system", content: "You are a careful recreational running coach. Give a concise review: (1) what the numbers suggest, (2) one positive observation, (3) one practical next-session adjustment, and (4) recovery reminder. Use the supplied effort and remarks. Do not diagnose injuries or provide medical advice. Do not claim that one workout proves fitness or predict a race result. If pain, dizziness, chest symptoms, or unusual shortness of breath are mentioned, recommend stopping and seeking appropriate medical care." },
-          { role: "user", content: `Review this activity:\n${JSON.stringify(activity)}` }
-        ]
+        systemInstruction: {
+          parts: [{ text: "You are a careful recreational running coach. Give a concise review: (1) what the numbers suggest, (2) one positive observation, (3) one practical next-session adjustment, and (4) recovery reminder. Use the supplied effort and remarks. Do not diagnose injuries or provide medical advice. Do not claim that one workout proves fitness or predict a race result. If pain, dizziness, chest symptoms, or unusual shortness of breath are mentioned, recommend stopping and seeking appropriate medical care." }],
+        },
+        contents: [{ role: "user", parts: [{ text: `Review this activity:\n${JSON.stringify(activity)}` }] }],
+        generationConfig: { temperature: 0.3 },
       })
     });
     const result = await response.json();
     if (!response.ok) {
       return Response.json({ error: result?.error?.message || "AI provider request failed." }, { status: 502, headers: corsHeaders });
     }
-    const analysis = result?.choices?.[0]?.message?.content;
+    const analysis = result?.candidates?.[0]?.content?.parts
+      ?.map((part: { text?: string }) => part.text || "")
+      .join("\n")
+      .trim();
     if (!analysis) return Response.json({ error: "No analysis returned by provider." }, { status: 502, headers: corsHeaders });
     return Response.json({ analysis }, { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (error) {

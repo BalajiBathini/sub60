@@ -158,7 +158,10 @@ async function analyze(){
     const {data,error}=await supabase.functions.invoke("analyze-activity",{body:{activity:{session_date:s.session_date,session_type:s.session_type,distance_km:s.distance_km,duration_minutes:s.duration_minutes,effort:s.effort,remarks:s.remarks}}});
     if(error)throw error;if(!data?.analysis)throw new Error(data?.error||"No analysis returned.");
     $("aiOutput").textContent=data.analysis;setVisible("aiOutput",true);setStatus("aiStatus","Review ready.","ok");
-  }catch(e){setStatus("aiStatus",e.message||"AI request failed. Confirm the Edge Function and secret are deployed.","err");}
+  }catch(e){
+    const details=e.context?.json?await e.context.json().catch(()=>null):null;
+    setStatus("aiStatus",details?.error||e.message||"AI request failed. Confirm the Edge Function and Gemini secret are deployed.","err");
+  }
   finally{$("analyzeBtn").disabled=false;}
 }
 $("connectBtn").addEventListener("click",async()=>{
